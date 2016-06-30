@@ -1,0 +1,27 @@
+#:kivy 1.0.9
+
+<LoginScreen>:    
+          
+    Label:
+        font_size: 30  
+        text: "Bitte hier Ihre Email-Adresse angeben:"
+		center_x: root.width/2
+        center_y: root.height*0.9
+		
+    TextInput:
+		width: root.width*0.9
+		height: 50
+		font_size: 30  
+		multiline: False   
+		center_x: root.width/2	
+		center_y: root.height*0.75
+
+	Button: 
+		width: root.width*0.9
+		height: 40
+		font_size: 30 		
+		text: "Weiter"
+		center_x: root.width/2
+		center_y: root.height*0.6 
+				
+<TakePhoto>:
