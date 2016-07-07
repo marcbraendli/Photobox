@@ -1,20 +1,26 @@
-<LoginScreen>:
-	orientation: 'vertical'
-    padding: 20  # Border around the widgets inside this boxlayout
-    spacing: 15  # Spacing between the widgets inside this boxlayout
+#:kivy 1.0.9
+
+<LoginScreen>:    
+          
     Label:
-        font_size: 30
+        font_size: 20   
         text: "Bitte hier Ihre Email-Adresse angeben:"
-        size_hint_y: .3  # => 30% of normal size (LoginScreen.height/4*0.3)
+		center_x: root.width/2
+        center_y: root.height*0.9
+		
     TextInput:
-		font_size: 30
-		multiline: False
-		size_hint_y: None  # Must set to None to honor height property
-		height: 50
-    Button:
-        size_hint_y: .2
-        font_size: 30
-        text: "Weiter"
-    Widget:  # Dummy widgets which just acts as spacer
+		width: root.width*0.9
+		height: 30
+		multiline: False   
+		center_x: root.width/2	
+		center_y: root.height*0.8
+
+	Button: 
+		width: root.width*0.9
+		height: 40
+		font_size: 20 		
+		text: "Weiter"
+		center_x: root.width/2
+		center_y: root.height*0.7 
 				
 <TakePhoto>:
