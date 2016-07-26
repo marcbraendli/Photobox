@@ -27,10 +27,8 @@ echo VERSENDEN-auskommentiert
 
 #AUFRAEUMEN
 echo AUFRAEUMEN
-
 mkdir -p /media/usb0/photobooth_archive/photobox_$(date +"%d%m%Y")
 cp ~/photobooth/photobox_${timestemp}.jpg /media/usb0/photobooth_archive/photobox_$(date +"%d%m%Y")/
-
 rm ~/photobooth/capture_images/*.jpg
 rm ~/photobooth/photobox*.jpg
 rm ~/photobooth/temp*.jpg
