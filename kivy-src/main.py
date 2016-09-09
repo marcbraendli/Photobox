@@ -5,6 +5,9 @@ from kivy.factory import Factory
 from kivy.clock import Clock
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.camera import Camera
+from kivy.uix.image import Image
+
+import os
 COUNTDOWN = 3
 
 
@@ -29,6 +32,8 @@ class CaptureScreen(Screen):
         cam = Camera(resolution=(640, 480), play=True)
         self.add_widget(cam)
 
+        self.iteration = 0
+
     def show_start(self, *kwargs):
         self.float_layout.add_widget(self.start_button)
 
@@ -39,6 +44,24 @@ class CaptureScreen(Screen):
 
     def take_picture(self):
         self.float_layout.remove_widget(self.countdown)
+        os.system("gfoto2 ")
+        Clock.schedule_interval(self.check_for_picture)
+
+    def check_for_picture(self, *kwargs):
+        if os.path.isfile("bild%s.jpg" % self.iteration):
+            self.show_picture(self.iteration)
+            Clock.unschedule(self.check_for_picture)
+
+    def show_picture(self):
+        image = Image(souce="bild%s.jpg" % self.iteration)
+        self.float_layout.clear_widgets()
+        self.float_layout.add_widget(image)
+        if self.iteration == 3:
+            self.manager.current = "pending"
+            self.iteration = 0
+        else:
+            self.iteration += 1
+            Clock.schedule_once(self.take_picture, 2)
 
 
 class Countdown(AnchorLayout):
