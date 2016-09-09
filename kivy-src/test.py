@@ -4,10 +4,8 @@ from kivy.uix.screenmanager import Screen
 from kivy.factory import Factory
 from kivy.clock import Clock
 from kivy.uix.anchorlayout import AnchorLayout
-from kivy.uix.camera import Camera
-from kivy.uix.image import Image
 
-import os
+
 COUNTDOWN = 3
 
 
@@ -29,10 +27,6 @@ class CaptureScreen(Screen):
         self.countdown = Factory.Countdown()
         self.countdown.action = self.take_picture
         self.bind(on_pre_enter=self.show_start)
-        cam = Camera(resolution=(640, 480), play=True)
-        self.add_widget(cam)
-
-        self.iteration = 0
 
     def show_start(self, *kwargs):
         self.float_layout.add_widget(self.start_button)
@@ -44,28 +38,6 @@ class CaptureScreen(Screen):
 
     def take_picture(self):
         self.float_layout.remove_widget(self.countdown)
-        os.system("gphoto2 --capture-image-and-download --filename ~/workspace/capture_images/capture%s.jpg" % self.iteration)
-        Clock.schedule_interval(self.check_for_picture, 0.5)
-
-    def check_for_picture(self, *kwargs):
-        path="~/workspace/capture_images/capture%s.jpg" % self.iteration
-        path=os.path.expanduser(path)
-        print path
-        if os.path.isfile(path):
-            self.show_picture(path)
-            Clock.unschedule(self.check_for_picture)
-
-    def show_picture(self, path):
-        print "show_picture"
-        image = Image(source=path)
-        self.float_layout.clear_widgets()
-        self.float_layout.add_widget(image)
-        if self.iteration == 3:
-            self.manager.current = "pending"
-            self.iteration = 0
-        else:
-            self.iteration += 1
-            Clock.schedule_once(self.take_picture, 2)
 
 
 class Countdown(AnchorLayout):
@@ -89,11 +61,19 @@ class MainLayout(FloatLayout):
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
-        self.screen_manager.current = "capture"
+        #self.screen_manager.current = "capture"
+        Clock.schedule_once(self.add_cam)
+        
+    def add_cam(self, *kwargs):
+        cam = Factory.Cam()
+        self.add_widget(cam)
+
 
  
 class MyApp(App):
     def build(self):
+        #test = Factory.Test()
+        #return test
         return MainLayout()
 
     
