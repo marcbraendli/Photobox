@@ -26,7 +26,12 @@ class CaptureScreen(Screen):
         self.start_button.action = self.show_countdown
         self.countdown = Factory.Countdown()
         self.countdown.action = self.take_picture
+        self.camera = Factory.Cam()
         self.bind(on_pre_enter=self.show_start)
+
+        def after_init(*kargs):
+            self.camera_space.add_widget(self.camera)
+        Clock.schedule_once(after_init)
 
     def show_start(self, *kwargs):
         self.float_layout.add_widget(self.start_button)
