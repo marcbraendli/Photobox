@@ -1,26 +1,84 @@
-#:kivy 1.0.9
+#: import SlideTransition kivy.uix.screenmanager.SlideTransition
 
-<LoginScreen>:    
-          
-    Label:
-        font_size: 20   
-        text: "Bitte hier Ihre Email-Adresse angeben:"
-		center_x: root.width/2
-        center_y: root.height*0.9
-		
-    TextInput:
-		width: root.width*0.9
-		height: 30
-		multiline: False   
-		center_x: root.width/2	
-		center_y: root.height*0.8
+<MainLayout>:
+    screen_manager: screen_manager
+    ScreenManager:
+        id: screen_manager
+        transition: SlideTransition()
+        LoginScreen:
+            id: login_screen
+        CaptureScreen:
+            id: capture_screen
+        PendingScreen:
+            id: pending_screen
 
-	Button: 
-		width: root.width*0.9
-		height: 40
-		font_size: 20 		
-		text: "Weiter"
-		center_x: root.width/2
-		center_y: root.height*0.7 
+<LoginScreen>:
+    name: 'login'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20  # Border around the widgets inside this boxlayout
+        spacing: 15  # Spacing between the widgets inside this boxlayout
+        Label:
+            font_size: 30
+            text: "Bitte hier Ihre Email-Adresse angeben:"
+            size_hint_y: .3  # => 30% of normal size (LoginScreen.height/4*0.3)
+        TextInput:
+            font_size: 30
+            multiline: False
+            size_hint_y: None  # Must set to None to honor height property
+            height: 50
+        Button:
+            size_hint_y: .2
+            font_size: 30
+            text: "Weiter"
+            on_press:
+                root.next()
+        Widget:  # Dummy widgets which just acts as spacer
+
+<CaptureScreen>:
+    name: 'capture'
+    float_layout: float_layout
+    Camera:
+        resolution: (640, 480)
+        play: False
+    FloatLayout:
+        id: float_layout
+
+
+<StartButton@AnchorLayout>:
+    padding: 0, 10
+    anchor_x: 'center'
+    anchor_y: 'bottom'
+    action: None
+    Button:
+        size_hint: None, None
+        size: 300, 100
+        text: "Start"
+        on_press:
+            root.action()
+
+<Countdown>:
+    count: 1
+    action: None
+    BoxLayout:
+        size_hint: 0.3, 0.3
+        canvas.before:
+            Color:
+                rgba: 0,0,0,.5
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        Label:
+            font_size: 45
+            bold: True
+            text: str(root.count)
+
+
+<PendingScreen@Screen>:
+    name: 'pending'
+    BoxLayout:
+        Button:
+            text: "Please wait wait..."
+
 				
 <TakePhoto>:
