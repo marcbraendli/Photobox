@@ -37,12 +37,15 @@
 
 <CaptureScreen>:
     name: 'capture'
+    camera_space: camera_space
     float_layout: float_layout
-    Camera:
-        resolution: (640, 480)
-        play: False
+    FloatLayout:
+        id: camera_space
     FloatLayout:
         id: float_layout
+
+<Cam@Camera>:
+    resolution: (640, 480)
 
 
 <StartButton@AnchorLayout>:
