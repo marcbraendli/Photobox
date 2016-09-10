@@ -14,7 +14,7 @@ import time
 COUNTDOWN = 3
 TIMESTAMP=0
 DAYSTAMP=0
-MAILADRESS="default"
+MAILADRESS=0
 
 
 class LoginScreen(Screen):
