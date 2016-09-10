@@ -94,6 +94,8 @@ class Countdown(AnchorLayout):
             self.count = COUNTDOWN
 
 """class PendingScreen(Screen):
+#timestamp und daystamp ist nicht attribut dieser klasse !!!
+#möglichkeit zur übernahme ???
 
     def __init__(self, **kwargs):
         super(Pendingscreen, self).__init__(**kwargs) 
@@ -115,11 +117,17 @@ class Countdown(AnchorLayout):
        os.system("lp -d CP9810DW ~/photobooth/photobox_%s.jpg", %timestamp)
        
     def clean_up(self, *kwargs):
-       os.system("mkdir -p /media/usb0/photobooth_archive/photobox_%s" %daystamp)
+       path= "/media/usb0/photobooth_archive/photobox_%s" %daystamp
+       assure_path_exists(path)
        os.system("cp ~/photobooth/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %(daystamp, daystamp)
        os.system("rm ~/photobooth/capture_images/*.jpg")
        os.system("rm ~/photobooth/photobox*.jpg")
-       os.system("rm ~/photobooth/temp*.jpg")"""
+       os.system("rm ~/photobooth/temp*.jpg")   
+       
+    def assure_path_exists(path):
+        dir = os.path.dirname(path)
+        if not os.path.exists(dir):
+                os.makedirs(dir)"""
 
 
 class MainLayout(FloatLayout):
