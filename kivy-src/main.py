@@ -121,6 +121,7 @@ class Countdown(AnchorLayout):
         print "finished"
     
     def send_mail(self, mailadress, *kwargs):
+      #fkt inhalt getestet
        os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %(mailadress, TIMESTAMP)) 
        
     def print_picture(self, *kwargs):
