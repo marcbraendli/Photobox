@@ -109,22 +109,25 @@ class Countdown(AnchorLayout):
         self.clean_up()
         
     def assembly(self, *kwargs):
-       os.system("mogrify -resize 968x648 ~/photobooth/capture_images/*.jpg")
-       os.system("montage ~/photobooth/capture_images/*.jpg -tile 2x2 -geometry +10+10 ~/photobooth/temp_montage.jpg")
-       os.system("montage ~/photobooth/temp_montage.jpg ~/photobooth/footer.jpg -tile 2x1 -geometry +5+5 ~/photobooth/photobox_%s.jpg" %TIMESTAMP)
+       print "1/3"
+       os.system("mogrify -resize 968x648 ~/workspace/capture_images/*.jpg")
+       print "2/3"
+       os.system("montage ~/workspace/capture_images/*.jpg -tile 2x2 -geometry +10+10 ~/workspace/temp_montage.jpg")
+       print "3/3"
+       os.system("montage ~/workspace/temp_montage.jpg ~/workspace/footer.jpg -tile 2x1 -geometry +5+5 ~/workspace/photobox_%s.jpg" %TIMESTAMP)
     
     def send_mail(self, mailadress, *kwargs):
-       os.system("mail < ~/photobooth/mail_message %s -s "Photobox" -A "~/photobooth/photobox_%s.jpg" %(mailadress, TIMESTAMP)) 
+       os.system("mail < ~/workspace/mail_message %s -s "Photobox" -A "~/workspace/photobox_%s.jpg" %(mailadress, TIMESTAMP)) 
        
     def print_picture(self, *kwargs):
-       os.system("lp -d CP9810DW ~/photobooth/photobox_%s.jpg" %TIMESTAMP)
+       os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" %TIMESTAMP)
        
     def clean_up(self, *kwargs):
        path= "/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP
        self.assure_path_exists(path)
-       os.system("cp ~/photobooth/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %(DAYSTAMP, DAYSTAMP))
-       os.system("rm ~/photobooth/capture_images/*.jpg")
-       os.system("rm ~/photobooth/photobox*.jpg")
+       os.system("cp ~/workspace/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %(DAYSTAMP, DAYSTAMP))
+       os.system("rm ~/workspace/capture_images/*.jpg")
+       os.system("rm ~/workspace/photobox*.jpg")
        os.system("rm ~/photobooth/temp*.jpg")   
        
     def assure_path_exists(self, *kwargs):
