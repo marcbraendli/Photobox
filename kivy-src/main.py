@@ -50,14 +50,16 @@ class CaptureScreen(Screen):
 
     def take_picture(self, *kwargs):
         print "take_picture"
+        path="~/workspace/capture_images/capture%s_%s.jpg" %(self.timestamp, self.iteration)
+        path=os.path.expanduser(path)
         self.float_layout.remove_widget(self.countdown)
         os.system("gphoto2 --capture-image-and-download --filename ~/workspace/capture_images/capture%s_%s.jpg" %(self.timestamp, self.iteration))
-        #self.show_picture(path)#marc
         Clock.schedule_interval(self.check_for_picture, 0.5)
 
     def check_for_picture(self, *kwargs):
         path="~/workspace/capture_images/capture%s_%s.jpg" %(self.timestamp, self.iteration)
         path=os.path.expanduser(path)
+        self.float_layout.remove_widget(self.countdown)
         if os.path.isfile(path):
             self.show_picture(path)
             Clock.unschedule(self.check_for_picture)
@@ -73,11 +75,7 @@ class CaptureScreen(Screen):
             self.manager.current = "pending"  
         else:
             self.iteration += 1
-            self.float_layout.remove_widget(image)    #marc
-            #Clock.schedule_once(self.take_picture, 2)
             Clock.schedule_once(self.show_countdown, 2)
-            
-
 
 class Countdown(AnchorLayout):
 
