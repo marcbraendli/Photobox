@@ -129,18 +129,19 @@ class Countdown(AnchorLayout):
        os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" %TIMESTAMP)
        
     def clean_up(self, *kwargs):
+    #fkt inhalt getestet
        path= "/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP
-       self.assure_path_exists(path)
-       os.system("cp ~/workspace/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %(DAYSTAMP, DAYSTAMP))
+       assure_path_exists(path)
+       os.system("cp ~/workspace/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %(TIMESTAMP, DAYSTAMP))
        os.system("rm ~/workspace/capture_images/*.jpg")
        os.system("rm ~/workspace/photobox*.jpg")
-       os.system("rm ~/photobooth/temp*.jpg")   
+       os.system("rm ~/workspace/temp*.jpg")
        
     def assure_path_exists(self, *kwargs):
-        dirpath=("/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP)
-        dir = os.path.dirname(dirpath)
-        if not os.path.exists(dir):
-                os.makedirs(dir)"""
+      #fkt inhalt getestet
+       dirpath="/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP
+       if not os.path.exists(dirpath):
+          os.makedirs(dirpath)"""
 
 """class ScreenSaver(Screen):
     def show_picture(self, path):
