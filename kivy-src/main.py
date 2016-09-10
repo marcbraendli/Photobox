@@ -42,7 +42,7 @@ class CaptureScreen(Screen):
         cam = Camera(resolution=(640, 480), play=True)
         self.add_widget(cam)
         
-        self.image =Image(source="")
+        self.image = Image(source="")
 
         self.iteration = 0
         TIMESTAMP=time.strftime("%d%m%Y-%H%M%S")
@@ -82,6 +82,8 @@ class CaptureScreen(Screen):
         self.float_layout.add_widget(self.image) #marc
         if self.iteration == 3:
             self.iteration = 0
+            self.float_layout.clear_widgets()#marc
+            print"switch to pending"
             self.manager.current = "pending"  
         else:
             self.iteration += 1
@@ -103,17 +105,23 @@ class Countdown(AnchorLayout):
             self.action()
             self.count = COUNTDOWN
 
-"""class PendingScreen(Screen):
+class PendingScreen(Screen):
 
     def __init__(self, **kwargs):
         super(PendingScreen, self).__init__(**kwargs) 
+        
+        
+        
+    def assembly_and_print(self, *kwargs):
+        print"assembly_and_print"
         self.assembly()
-        self.print_picture()
+        #self.print_picture()
         #self.send_mail()
-        self.clean_up()
+        self.clean_up()   
+        
         
     def assembly(self, *kwargs):  
-        #fkt inhalt getestet und kalibriert
+        print "assembly"
         os.system("mogrify -resize 856x570 ~/workspace/capture_images/*.jpg")
         os.system("montage ~/workspace/capture_images/*.jpg -tile 2x2 -geometry +10+10 ~/workspace/temp_montage.jpg")
         os.system("montage ~/workspace/temp_montage.jpg -geometry +4+23 ~/workspace/temp_montage2.jpg")
@@ -121,35 +129,34 @@ class Countdown(AnchorLayout):
         os.system("montage ~/workspace/temp_montage3.jpg -geometry +0+20 ~/workspace/photobox_%s.jpg" %TIMESTAMP)
     
     def send_mail(self, *kwargs):
-        #fkt inhalt getestet
-        os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %(MAILADRESS, TIMESTAMP)) 
+        print "send_mail"
+        os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Photobox2\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %(MAILADRESS, TIMESTAMP)) 
        
     def print_picture(self, *kwargs):
-        #fkt inhalt getestet
+        print "print_picture"
         os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" %TIMESTAMP)
        
     def clean_up(self, *kwargs):
-    #fkt inhalt getestet
-       path= "/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP
-       assure_path_exists(path)
-       os.system("cp ~/workspace/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %(TIMESTAMP, DAYSTAMP))
-       os.system("rm ~/workspace/capture_images/*.jpg")
-       os.system("rm ~/workspace/photobox*.jpg")
-       os.system("rm ~/workspace/temp*.jpg")
+        print "clean_up"
+        path ="/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP
+        self.assure_path_exists(path)
+        os.system("cp ~/workspace/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %(TIMESTAMP, DAYSTAMP))
+        os.system("rm ~/workspace/capture_images/*.jpg")
+        os.system("rm ~/workspace/photobox*.jpg")
+        os.system("rm ~/workspace/temp*.jpg")
        
     def assure_path_exists(self, *kwargs):
-      #fkt inhalt getestet
-       dirpath="/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP
-       if not os.path.exists(dirpath):
-          os.makedirs(dirpath)"""
+        dirpath="/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP
+        if not os.path.exists(dirpath):
+           os.makedirs(dirpath)
 
-"""class ScreenSaver(Screen):
-    def show_picture(self, path):
+class ScreenSaver(Screen):
+    def show_picture(self, *kwargs):
         print "show_picture_slideshow"
         #self.float_layout.clear_widgets()
-        self.image = Image(source=path)
-        self.float_layout.add_widget(self.image) #marc
-        Clock.schedule_once(self.show_picture, 5)"""
+        #self.image = Image(source=path)
+        #self.float_layout.add_widget(self.image) #marc
+        #Clock.schedule_once(self.show_picture, 5)"""
     
 class MainLayout(FloatLayout):
 
