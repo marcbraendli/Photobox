@@ -124,6 +124,7 @@ class Countdown(AnchorLayout):
        os.system("mail < ~/workspace/mail_message %s -s "Photobox" -A "~/workspace/photobox_%s.jpg" %(mailadress, TIMESTAMP)) 
        
     def print_picture(self, *kwargs):
+      #fkt inhalt getestet
        os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" %TIMESTAMP)
        
     def clean_up(self, *kwargs):
