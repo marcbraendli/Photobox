@@ -14,11 +14,15 @@ import time
 COUNTDOWN = 3
 TIMESTAMP=0
 DAYSTAMP=0
+MAILADRESS="default"
+
 
 class LoginScreen(Screen):
 
     def __init__(self, **kwargs):
         super(LoginScreen, self).__init__(**kwargs)
+        global MAILADRESS
+        MAILADRESS="marc_braendli@hotmail.com"
 
     def next(self):
         self.manager.current = "capture"
@@ -105,28 +109,24 @@ class Countdown(AnchorLayout):
         super(PendingScreen, self).__init__(**kwargs) 
         self.assembly()
         self.print_picture()
-        #self.send_mail(mailadress)
+        #self.send_mail()
         self.clean_up()
         
     def assembly(self, *kwargs):  
         #fkt inhalt getestet und kalibriert
-        print "1/3-auskommentiert"
         os.system("mogrify -resize 856x570 ~/workspace/capture_images/*.jpg")
-        print "2/3"
         os.system("montage ~/workspace/capture_images/*.jpg -tile 2x2 -geometry +10+10 ~/workspace/temp_montage.jpg")
         os.system("montage ~/workspace/temp_montage.jpg -geometry +4+23 ~/workspace/temp_montage2.jpg")
-        print "3/3"
         os.system("montage ~/workspace/temp_montage2.jpg ~/workspace/footer_3.jpg -tile 2x1 -geometry +2+0 ~/workspace/temp_montage3.jpg")
         os.system("montage ~/workspace/temp_montage3.jpg -geometry +0+20 ~/workspace/photobox_%s.jpg" %TIMESTAMP)
-        print "finished"
     
-    def send_mail(self, mailadress, *kwargs):
-      #fkt inhalt getestet
-       os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %(mailadress, TIMESTAMP)) 
+    def send_mail(self, *kwargs):
+        #fkt inhalt getestet
+        os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %(MAILADRESS, TIMESTAMP)) 
        
     def print_picture(self, *kwargs):
-      #fkt inhalt getestet
-       os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" %TIMESTAMP)
+        #fkt inhalt getestet
+        os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" %TIMESTAMP)
        
     def clean_up(self, *kwargs):
     #fkt inhalt getestet
