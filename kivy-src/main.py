@@ -12,8 +12,8 @@ import time
 
 
 COUNTDOWN = 3
-timestamp=0
-daystamp=0
+TIMESTAMP=0
+DAYSTAMP=0
 
 class LoginScreen(Screen):
 
@@ -28,8 +28,8 @@ class CaptureScreen(Screen):
 
     def __init__(self, **kwargs):
         super(CaptureScreen, self).__init__(**kwargs)
-        global timestamp
-        global daystamp
+        global TIMESTAMP
+        global DAYSTAMP
         self.start_button = Factory.StartButton()
         self.start_button.action = self.show_countdown
         self.countdown = Factory.Countdown()
@@ -37,30 +37,33 @@ class CaptureScreen(Screen):
         self.bind(on_pre_enter=self.show_start)
         cam = Camera(resolution=(640, 480), play=True)
         self.add_widget(cam)
+        
+        self.image =Image(source="")
 
         self.iteration = 0
-        timestamp=time.strftime("%d%m%Y-%H%M%S")
-        daystamp=time.strftime("%d%m%Y")
+        TIMESTAMP=time.strftime("%d%m%Y-%H%M%S")
+        DAYSTAMP=time.strftime("%d%m%Y")
 
     def show_start(self, *kwargs):
         self.float_layout.add_widget(self.start_button)
 
     def show_countdown(self, *kwargs):
         self.float_layout.remove_widget(self.start_button)
-        
+        self.float_layout.remove_widget(self.image)
         self.float_layout.add_widget(self.countdown)
         self.countdown.start()
 
     def take_picture(self, *kwargs):
         print "take_picture"
-        path="~/workspace/capture_images/capture%s_%s.jpg" %(timestamp, self.iteration)
-        path=os.path.expanduser(path)
+        #path="~/workspace/capture_images/capture%s_%s.jpg" %(TIMESTAMP, self.iteration)
+        #path=os.path.expanduser(path)
         self.float_layout.remove_widget(self.countdown)
-        os.system("gphoto2 --capture-image-and-download --filename ~/workspace/capture_images/capture%s_%s.jpg" %(timestamp, self.iteration))
+        os.system("gphoto2 --capture-image-and-download --filename ~/workspace/capture_images/capture%s_%s.jpg" %(TIMESTAMP, self.iteration))
         Clock.schedule_interval(self.check_for_picture, 0.5)
+        #self.show_picture(path)
 
     def check_for_picture(self, *kwargs):
-        path="~/workspace/capture_images/capture%s_%s.jpg" %(timestamp, self.iteration)
+        path="~/workspace/capture_images/capture%s_%s.jpg" %(TIMESTAMP, self.iteration)
         path=os.path.expanduser(path)
         self.float_layout.remove_widget(self.countdown)
         if os.path.isfile(path):
@@ -69,9 +72,10 @@ class CaptureScreen(Screen):
 
     def show_picture(self, path):
         print "show_picture"
-        image = Image(source=path)
-        self.float_layout.clear_widgets()
-        self.float_layout.add_widget(image) #marc
+        self.image = Image(source=path)
+        #self.float_layout.clear_widgets()
+        self.float_layout.remove_widget(self.countdown)
+        self.float_layout.add_widget(self.image) #marc
         if self.iteration == 3:
             self.iteration = 0
             self.manager.current = "pending"  
@@ -96,39 +100,47 @@ class Countdown(AnchorLayout):
             self.count = COUNTDOWN
 
 """class PendingScreen(Screen):
+
     def __init__(self, **kwargs):
-        super(Pendingscreen, self).__init__(**kwargs) 
+        super(PendingScreen, self).__init__(**kwargs) 
         self.assembly()
-        print_picture()
-        send_mail(mailadress)
-        clean_up()
+        self.print_picture()
+        #self.send_mail(mailadress)
+        self.clean_up()
         
     def assembly(self, *kwargs):
        os.system("mogrify -resize 968x648 ~/photobooth/capture_images/*.jpg")
        os.system("montage ~/photobooth/capture_images/*.jpg -tile 2x2 -geometry +10+10 ~/photobooth/temp_montage.jpg")
-       os.system("montage ~/photobooth/temp_montage.jpg ~/photobooth/footer.jpg -tile 2x1 -geometry +5+5 ~/photobooth/photobox_%s.jpg" %timestamp)
+       os.system("montage ~/photobooth/temp_montage.jpg ~/photobooth/footer.jpg -tile 2x1 -geometry +5+5 ~/photobooth/photobox_%s.jpg" %TIMESTAMP)
     
     def send_mail(self, mailadress, *kwargs):
-       os.system("mail < ~/photobooth/mail_message %s -s "Photobox" -A "~/photobooth/photobox_%s.jpg" %(mailadress, timestamp)) 
+       os.system("mail < ~/photobooth/mail_message %s -s "Photobox" -A "~/photobooth/photobox_%s.jpg" %(mailadress, TIMESTAMP)) 
        
     def print_picture(self, *kwargs):
-       os.system("lp -d CP9810DW ~/photobooth/photobox_%s.jpg" %timestamp)
+       os.system("lp -d CP9810DW ~/photobooth/photobox_%s.jpg" %TIMESTAMP)
        
     def clean_up(self, *kwargs):
-       path= "/media/usb0/photobooth_archive/photobox_%s" %daystamp
-       assure_path_exists(path)
-       os.system("cp ~/photobooth/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %(daystamp, daystamp))
+       path= "/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP
+       self.assure_path_exists(path)
+       os.system("cp ~/photobooth/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %(DAYSTAMP, DAYSTAMP))
        os.system("rm ~/photobooth/capture_images/*.jpg")
        os.system("rm ~/photobooth/photobox*.jpg")
        os.system("rm ~/photobooth/temp*.jpg")   
        
     def assure_path_exists(self, *kwargs):
-        dirpath=("/media/usb0/photobooth_archive/photobox_%s" %daystamp)
+        dirpath=("/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP)
         dir = os.path.dirname(dirpath)
         if not os.path.exists(dir):
                 os.makedirs(dir)"""
 
-
+"""class ScreenSaver(Screen):
+    def show_picture(self, path):
+        print "show_picture_slideshow"
+        #self.float_layout.clear_widgets()
+        self.image = Image(source=path)
+        self.float_layout.add_widget(self.image) #marc
+        Clock.schedule_once(self.show_picture, 5)"""
+    
 class MainLayout(FloatLayout):
 
     def __init__(self, **kwargs):
