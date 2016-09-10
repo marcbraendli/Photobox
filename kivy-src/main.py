@@ -108,18 +108,15 @@ class Countdown(AnchorLayout):
 class PendingScreen(Screen):
 
     def __init__(self, **kwargs):
-        super(PendingScreen, self).__init__(**kwargs) 
-        
-        
-        
+        super(PendingScreen, self).__init__(**kwargs)
+           
     def assembly_and_print(self, *kwargs):
         print"assembly_and_print"
         self.assembly()
         #self.print_picture()
         #self.send_mail()
-        self.clean_up()   
-        
-        
+        self.clean_up()
+            
     def assembly(self, *kwargs):  
         print "assembly"
         os.system("mogrify -resize 856x570 ~/workspace/capture_images/*.jpg")
