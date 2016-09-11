@@ -6,25 +6,26 @@ from kivy.clock import Clock
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.camera import Camera
 from kivy.uix.image import Image
+from threading import Thread
 
 import os
 import time
 
 
 COUNTDOWN = 3
-TIMESTAMP=0
-DAYSTAMP=0
-MAILADRESS=0
 
 
 class LoginScreen(Screen):
 
     def __init__(self, **kwargs):
         super(LoginScreen, self).__init__(**kwargs)
-        global MAILADRESS
-        MAILADRESS="marc_braendli@hotmail.com"
+        self.bind(on_pre_enter=self.prepare)
 
-    def next(self):
+    def prepare(self, *args):
+        self.manager.mail_address = ""
+
+    def next(self, mail_address):
+        self.manager.mail_address = mail_address
         self.manager.current = "capture"
 
 
@@ -32,24 +33,23 @@ class CaptureScreen(Screen):
 
     def __init__(self, **kwargs):
         super(CaptureScreen, self).__init__(**kwargs)
-        global TIMESTAMP
-        global DAYSTAMP
         self.start_button = Factory.StartButton()
         self.start_button.action = self.show_countdown
         self.countdown = Factory.Countdown()
         self.countdown.action = self.take_picture
         self.bind(on_pre_enter=self.show_start)
-        cam = Camera(resolution=(640, 480), play=True)
-        self.add_widget(cam)
+        self.cam = Camera(resolution=(640, 480), play=False)
+        self.add_widget(self.cam)
         
         self.image = Image(source="")
 
         self.iteration = 0
-        TIMESTAMP=time.strftime("%d%m%Y-%H%M%S")
-        DAYSTAMP=time.strftime("%d%m%Y")
 
     def show_start(self, *kwargs):
         self.float_layout.add_widget(self.start_button)
+        self.manager.timestamp = time.strftime("%d%m%Y-%H%M%S")
+        self.manager.daystamp = time.strftime("%d%m%Y")
+        self.cam.play = True
 
     def show_countdown(self, *kwargs):
         self.float_layout.remove_widget(self.start_button)
@@ -58,36 +58,34 @@ class CaptureScreen(Screen):
         self.countdown.start()
 
     def take_picture(self, *kwargs):
-        print "take_picture"
-        #path="~/workspace/capture_images/capture%s_%s.jpg" %(TIMESTAMP, self.iteration)
-        #path=os.path.expanduser(path)
+        print "take_picture", self.manager.timestamp
         self.float_layout.remove_widget(self.countdown)
-        os.system("gphoto2 --capture-image-and-download --filename ~/workspace/capture_images/capture%s_%s.jpg" %(TIMESTAMP, self.iteration))
-        Clock.schedule_interval(self.check_for_picture, 0.5)
-        #self.show_picture(path)
+        Thread(target=self._take_picture_aync).start()
 
-    def check_for_picture(self, *kwargs):
-        path="~/workspace/capture_images/capture%s_%s.jpg" %(TIMESTAMP, self.iteration)
-        path=os.path.expanduser(path)
-        self.float_layout.remove_widget(self.countdown)
-        if os.path.isfile(path):
-            self.show_picture(path)
-            Clock.unschedule(self.check_for_picture)
+    def _take_picture_aync(self, *kwargs):
+        os.system("gphoto2 --capture-image-and-download --filename ~/workspace/capture_images/capture%s_%s.jpg" %
+                  (self.manager.timestamp, self.iteration))
+        path = "~/workspace/capture_images/capture%s_%s.jpg" % \
+               (self.manager.timestamp, self.iteration)
+        path = os.path.expanduser(path)
+        Clock.schedule_once(lambda x: self.show_picture(path))
 
     def show_picture(self, path):
         print "show_picture"
         self.image = Image(source=path)
-        #self.float_layout.clear_widgets()
-        self.float_layout.remove_widget(self.countdown)
+        self.float_layout.clear_widgets()
+        # self.float_layout.remove_widget(self.countdown)
         self.float_layout.add_widget(self.image) #marc
         if self.iteration == 3:
             self.iteration = 0
             self.float_layout.clear_widgets()#marc
+            self.cam.play = False
             print"switch to pending"
             self.manager.current = "pending"  
         else:
             self.iteration += 1
             Clock.schedule_once(self.show_countdown, 2)
+
 
 class Countdown(AnchorLayout):
 
@@ -105,17 +103,21 @@ class Countdown(AnchorLayout):
             self.action()
             self.count = COUNTDOWN
 
+
 class PendingScreen(Screen):
 
     def __init__(self, **kwargs):
         super(PendingScreen, self).__init__(**kwargs)
+        self.bind(on_enter=self.assembly_and_print)
            
     def assembly_and_print(self, *kwargs):
         print"assembly_and_print"
-        self.assembly()
+        #self.assembly()
+        Thread(target=self.assembly).start()
+        self.shown_text = "Please wait..."
         #self.print_picture()
         #self.send_mail()
-        self.clean_up()
+        #self.clean_up()
             
     def assembly(self, *kwargs):  
         print "assembly"
@@ -123,29 +125,45 @@ class PendingScreen(Screen):
         os.system("montage ~/workspace/capture_images/*.jpg -tile 2x2 -geometry +10+10 ~/workspace/temp_montage.jpg")
         os.system("montage ~/workspace/temp_montage.jpg -geometry +4+23 ~/workspace/temp_montage2.jpg")
         os.system("montage ~/workspace/temp_montage2.jpg ~/workspace/footer_3.jpg -tile 2x1 -geometry +2+0 ~/workspace/temp_montage3.jpg")
-        os.system("montage ~/workspace/temp_montage3.jpg -geometry +0+20 ~/workspace/photobox_%s.jpg" %TIMESTAMP)
-    
+        os.system("montage ~/workspace/temp_montage3.jpg -geometry +0+20 ~/workspace/photobox_%s.jpg" % self.manager.timestamp)
+        self.print_picture()
+        self.send_mail()
+        self.clean_up()
+        Clock.schedule_once(self.show_take_picture)
+
     def send_mail(self, *kwargs):
         print "send_mail"
-        os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Photobox2\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %(MAILADRESS, TIMESTAMP)) 
+        os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Photobox2\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %
+                  (self.manager.mail_address, self.manager.timestamp))
        
     def print_picture(self, *kwargs):
         print "print_picture"
-        os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" %TIMESTAMP)
+        os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" % self.manager.timestamp)
        
     def clean_up(self, *kwargs):
         print "clean_up"
-        path ="/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP
+        path ="/media/usb0/photobooth_archive/photobox_%s" % self.manager.timestamp
         self.assure_path_exists(path)
-        os.system("cp ~/workspace/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %(TIMESTAMP, DAYSTAMP))
+        os.system("cp ~/workspace/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %
+                  (self.manager.timestamp, self.manager.daystamp))
         os.system("rm ~/workspace/capture_images/*.jpg")
         os.system("rm ~/workspace/photobox*.jpg")
         os.system("rm ~/workspace/temp*.jpg")
        
     def assure_path_exists(self, *kwargs):
-        dirpath="/media/usb0/photobooth_archive/photobox_%s" %DAYSTAMP
-        if not os.path.exists(dirpath):
-           os.makedirs(dirpath)
+        dir_path = "/media/usb0/photobooth_archive/photobox_%s" % \
+                   self.manager.daystamp
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
+    def show_take_picture(self, *kwargs):
+        self.shown_text = "Bitte entnehmen Sie waht ever..."
+        Clock.schedule_once(self.show_screen_saver, 15)
+
+    def show_screen_saver(self, *kwargs):
+        Clock.unschedule(self.show_screen_saver)
+        self.manager.current = "screen_saver"
+
 
 class ScreenSaver(Screen):
     def show_picture(self, *kwargs):
@@ -154,12 +172,16 @@ class ScreenSaver(Screen):
         #self.image = Image(source=path)
         #self.float_layout.add_widget(self.image) #marc
         #Clock.schedule_once(self.show_picture, 5)"""
-    
+
+    def show_login(self):
+        self.manager.current = "login"
+
+
 class MainLayout(FloatLayout):
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
-        self.screen_manager.current = "capture"
+        #self.screen_manager.current = "capture"
 
  
 class MyApp(App):

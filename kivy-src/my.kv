@@ -4,6 +4,9 @@
     screen_manager: screen_manager
     ScreenManager:
         id: screen_manager
+        timestamp: ""
+        daystamp: ""
+        mail_address: ""
         transition: SlideTransition()
         LoginScreen:
             id: login_screen
@@ -25,8 +28,10 @@
             text: "Bitte hier Ihre Email-Adresse angeben:"
             size_hint_y: .3  # => 30% of normal size (LoginScreen.height/4*0.3)
         TextInput:
+            id: mail_input
             font_size: 30
             multiline: False
+            text: "marc@braendli.ch"
             size_hint_y: None  # Must set to None to honor height property
             height: 50
         Button:
@@ -34,7 +39,7 @@
             font_size: 30
             text: "Weiter"
             on_press:
-                root.next()
+                root.next(mail_input.text)
         Widget:  # Dummy widgets which just acts as spacer
 
 <CaptureScreen>:
@@ -76,12 +81,19 @@
 
 <PendingScreen@Screen>:
     name: 'pending'
+    shown_text: ""
     BoxLayout:
-        Button:
+        Label:
 			font_size: 30
-            text: "Please wait wait..."
+            text: root.shown_text
+        Button:
+            text: "okay"
             on_press:
-                root.assembly_and_print()
+                root.show_screen_saver()
 
 <ScreenSaver>:
 	name: 'screen_saver'
+	Button:
+        text: "okay"
+        on_press:
+            root.show_login()
