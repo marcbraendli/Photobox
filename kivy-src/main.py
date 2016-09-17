@@ -10,6 +10,8 @@ from threading import Thread
 
 import os
 import time
+import csv
+import re
 
 
 COUNTDOWN = 3
@@ -24,9 +26,28 @@ class LoginScreen(Screen):
     def prepare(self, *args):
         self.manager.mail_address = ""
 
-    def next(self, mail_address):
-        self.manager.mail_address = mail_address
-        self.manager.current = "capture"
+    def next(self, mail_input):
+        if self.validateEmail(mail_input):
+            print "Gueltige Adresse"
+            self.manager.mail_address = mail_input
+            a=open('mailadressen.csv', 'ab')
+            b = csv.writer(a)
+            b.writerow(['%s' %mail_input, '%s' %self.manager.timestamp])
+            a.close()
+            self.manager.current = "capture"
+        else:
+            print "Ungueltige Adresse!!!"
+            mail_input = "UNGUELTIGE EMAIL-ADRESSE"
+        
+        
+
+    def validateEmail(self, email):
+        if len(email) > 7:
+            if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$", email) != None:
+                self.manager.timestamp = time.strftime("%d%m%Y-%H%M%S")
+                self.manager.daystamp = time.strftime("%d%m%Y")
+                return True
+            return False
 
 
 class CaptureScreen(Screen):
@@ -47,8 +68,6 @@ class CaptureScreen(Screen):
 
     def show_start(self, *kwargs):
         self.float_layout.add_widget(self.start_button)
-        self.manager.timestamp = time.strftime("%d%m%Y-%H%M%S")
-        self.manager.daystamp = time.strftime("%d%m%Y")
         self.cam.play = True
 
     def show_countdown(self, *kwargs):
@@ -133,7 +152,7 @@ class PendingScreen(Screen):
 
     def send_mail(self, *kwargs):
         print "send_mail"
-        os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Photobox2\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %
+        os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %
                   (self.manager.mail_address, self.manager.timestamp))
        
     def print_picture(self, *kwargs):
