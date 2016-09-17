@@ -30,7 +30,7 @@ class LoginScreen(Screen):
         if self.validateEmail(mail_input):
             print "Gueltige Adresse"
             self.manager.mail_address = mail_input
-            a=open('mailadressen.csv', 'ab')
+            a=open('/home/photobox/workspace/mailadressen.csv', 'ab')
             b = csv.writer(a)
             b.writerow(['%s' %mail_input, '%s' %self.manager.timestamp])
             a.close()
@@ -143,7 +143,7 @@ class PendingScreen(Screen):
         os.system("mogrify -resize 856x570 ~/workspace/capture_images/*.jpg")
         os.system("montage ~/workspace/capture_images/*.jpg -tile 2x2 -geometry +10+10 ~/workspace/temp_montage.jpg")
         os.system("montage ~/workspace/temp_montage.jpg -geometry +4+23 ~/workspace/temp_montage2.jpg")
-        os.system("montage ~/workspace/temp_montage2.jpg ~/workspace/footer_3.jpg -tile 2x1 -geometry +2+0 ~/workspace/temp_montage3.jpg")
+        os.system("montage ~/workspace/temp_montage2.jpg ~/workspace/Photobox/footer_3.jpg -tile 2x1 -geometry +2+0 ~/workspace/temp_montage3.jpg")
         os.system("montage ~/workspace/temp_montage3.jpg -geometry +0+20 ~/workspace/photobox_%s.jpg" % self.manager.timestamp)
         self.print_picture()
         self.send_mail()
