@@ -7,11 +7,14 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.camera import Camera
 from kivy.uix.image import Image
 from threading import Thread
+from kivy.config import Config
+from kivy.core.window import Window
 
 import os
 import time
 import csv
 import re
+import random
 
 
 COUNTDOWN = 3
@@ -145,6 +148,7 @@ class PendingScreen(Screen):
         self.print_picture()
         self.send_mail()
         self.clean_up()
+        print "ende"
         Clock.schedule_once(self.show_take_picture)
 
     def send_mail(self, *kwargs):
@@ -179,9 +183,43 @@ class PendingScreen(Screen):
     def show_screen_saver(self, *kwargs):
         Clock.unschedule(self.show_screen_saver)
         self.manager.current = "screen_saver"
-
-
+        
 class ScreenSaver(Screen):
+
+    def __init__(self, **kwargs):
+        super(ScreenSaver, self).__init__(**kwargs)
+        self.photos = []
+        self.find_all_photos(self)
+        self.bind(on_enter=self.build)
+
+    def build(self, *kwargs):
+        keyb = Window.request_keyboard(self.show_login, self)
+        keyb.bind(on_key_down = self.key_pressed)
+        self.image = Image()
+        self.change_image()
+        Clock.schedule_interval(self.change_image, 10)
+        return self.image
+    
+    def show_login(self, *kwargs):
+        self.manager.current = "login"
+
+    def key_pressed(self, keyboard, keycode, text, modifiers):
+        self.next()
+
+    def change_image(self, whatever = None):
+        self.image.source = random.choice(self.photos)
+
+    def add_photos(self, nothing, dirname, files):
+        for file in files:
+            if file.endswith('.jpg') or file.endswith('.JPG'):
+                self.photos.append(os.path.join(dirname, file))
+    
+    def find_all_photos(self, *kwargs):
+        os.path.walk('/media/usb0/photobooth_archive/photobox_17092016/', self.add_photos, None)
+        #os.path.walk("/media/usb0/photobooth_archive/photobox_%s/"  % self.manager.daystamp, self.add_photos, None)
+
+
+"""class ScreenSaver(Screen):
     def show_picture(self, *kwargs):
         print "show_picture_slideshow"
         #self.float_layout.clear_widgets()
@@ -189,15 +227,14 @@ class ScreenSaver(Screen):
         #self.float_layout.add_widget(self.image) #marc
         #Clock.schedule_once(self.show_picture, 5)"""
 
-    def show_login(self):
-        self.manager.current = "login"
+
 
 
 class MainLayout(FloatLayout):
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
-        #self.screen_manager.current = "capture"
+        self.screen_manager.current = "screen_saver"
 
  
 class MyApp(App):
