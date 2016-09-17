@@ -19,6 +19,7 @@
 
 <LoginScreen>:
     name: 'login'
+	message_text: ''
     BoxLayout:
         orientation: 'vertical'
         padding: 20  # Border around the widgets inside this boxlayout
@@ -26,21 +27,28 @@
         Label:
             font_size: 30
             text: "Bitte hier Ihre Email-Adresse angeben:"
-            size_hint_y: .3  # => 30% of normal size (LoginScreen.height/4*0.3)
+            size_hint_y: .2  # => 30% of normal size (LoginScreen.height/4*0.3)
         TextInput:
             id: mail_input
             font_size: 30
             multiline: False
-            text: "marc@braendli.ch"
+			focus: True
+            #text: "marc@braendli.ch"
+			text: ""
             size_hint_y: None  # Must set to None to honor height property
             height: 50
         Button:
-            size_hint_y: .2
+            size_hint_y: .4
             font_size: 30
             text: "Weiter"
             on_press:
                 root.next(mail_input.text)
-        Widget:  # Dummy widgets which just acts as spacer
+		Label:
+			id: message
+			font_size: 30
+			text: root.message_text
+			
+        #Widget:  # Dummy widgets which just acts as spacer
 
 <CaptureScreen>:
     name: 'capture'

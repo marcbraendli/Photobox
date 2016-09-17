@@ -37,7 +37,7 @@ class LoginScreen(Screen):
             self.manager.current = "capture"
         else:
             print "Ungueltige Adresse!!!"
-            mail_input = "UNGUELTIGE EMAIL-ADRESSE"
+            self.message_text = "Bitte gib eine gueltige Email-Adresse ein"
         
         
 
@@ -59,7 +59,8 @@ class CaptureScreen(Screen):
         self.countdown = Factory.Countdown()
         self.countdown.action = self.take_picture
         self.bind(on_pre_enter=self.show_start)
-        self.cam = Camera(resolution=(640, 480), play=False)
+        #self.cam = Camera(resolution=(640, 480), play=False)
+        self.cam = Camera(resolution=(720, 540), play=True)
         self.add_widget(self.cam)
         
         self.image = Image(source="")
@@ -128,15 +129,11 @@ class PendingScreen(Screen):
     def __init__(self, **kwargs):
         super(PendingScreen, self).__init__(**kwargs)
         self.bind(on_enter=self.assembly_and_print)
-           
+                   
     def assembly_and_print(self, *kwargs):
         print"assembly_and_print"
-        #self.assembly()
         Thread(target=self.assembly).start()
         self.shown_text = "Please wait..."
-        #self.print_picture()
-        #self.send_mail()
-        #self.clean_up()
             
     def assembly(self, *kwargs):  
         print "assembly"
@@ -204,6 +201,7 @@ class MainLayout(FloatLayout):
 
  
 class MyApp(App):
+
     def build(self):
         return MainLayout()
 
