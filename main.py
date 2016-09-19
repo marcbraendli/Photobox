@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.screenmanager import Screen
@@ -34,18 +36,16 @@ class LoginScreen(Screen):
 
     def next(self, mail_input):
         if self.validateEmail(mail_input):
-            print "Gueltige Adresse"
+            print "Gültige Adresse"
             self.manager.mail_address = mail_input
-            a=open('/home/photobox/workspace/mailadressen.csv', 'ab')
+            a = open('/home/photobox/workspace/mailadressen.csv', 'ab')
             b = csv.writer(a)
-            b.writerow(['%s' %mail_input, '%s' %self.manager.timestamp])
+            b.writerow(['%s' % mail_input, '%s' % self.manager.timestamp])
             a.close()
             self.manager.current = "capture"
         else:
-            print "Ungueltige Adresse!!!"
-            self.message_text = "Bitte gib eine gueltige Email-Adresse ein"
-        
-        
+            print "Ungültige Adresse!!!"
+            self.message_text = "Bitte gib eine gültige Email-Adresse ein"
 
     def validateEmail(self, email):
         if len(email) > 7:
