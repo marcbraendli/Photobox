@@ -6,6 +6,7 @@ from kivy.clock import Clock
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.camera import Camera
 from kivy.uix.image import Image
+from kivy.properties import StringProperty
 from threading import Thread
 from kivy.config import Config
 from kivy.core.window import Window
@@ -18,6 +19,8 @@ import random
 
 
 COUNTDOWN = 3
+# /media/usb0/photobooth_archive/photobox_17092016/
+SCREENSAVER_FOLDER = "pics"
 
 
 class LoginScreen(Screen):
@@ -183,51 +186,39 @@ class PendingScreen(Screen):
     def show_screen_saver(self, *kwargs):
         Clock.unschedule(self.show_screen_saver)
         self.manager.current = "screen_saver"
-        
+
+
 class ScreenSaver(Screen):
+
+    image_source = StringProperty("")
 
     def __init__(self, **kwargs):
         super(ScreenSaver, self).__init__(**kwargs)
         self.photos = []
         self.find_all_photos(self)
-        self.bind(on_enter=self.build)
+        self.bind(on_pre_enter=self.find_all_photos)
 
-    def build(self, *kwargs):
-        keyb = Window.request_keyboard(self.show_login, self)
-        keyb.bind(on_key_down = self.key_pressed)
-        self.image = Image()
-        self.change_image()
-        Clock.schedule_interval(self.change_image, 10)
-        return self.image
-    
     def show_login(self, *kwargs):
         self.manager.current = "login"
+        Clock.unschedule(self.change_image)
 
-    def key_pressed(self, keyboard, keycode, text, modifiers):
-        self.next()
-
-    def change_image(self, whatever = None):
-        self.image.source = random.choice(self.photos)
+    def change_image(self, *kwargs):
+        old_image = new_image = self.image_source
+        while new_image == old_image and len(self.photos) > 1:
+            new_image = random.choice(self.photos)
+        self.image_source = new_image
 
     def add_photos(self, nothing, dirname, files):
-        for file in files:
-            if file.endswith('.jpg') or file.endswith('.JPG'):
-                self.photos.append(os.path.join(dirname, file))
+        self.photos = []
+        for f in files:
+            if f.endswith('.jpg') or f.endswith('.JPG'):
+                self.photos.append(os.path.join(dirname, f))
     
     def find_all_photos(self, *kwargs):
-        os.path.walk('/media/usb0/photobooth_archive/photobox_17092016/', self.add_photos, None)
-        #os.path.walk("/media/usb0/photobooth_archive/photobox_%s/"  % self.manager.daystamp, self.add_photos, None)
-
-
-"""class ScreenSaver(Screen):
-    def show_picture(self, *kwargs):
-        print "show_picture_slideshow"
-        #self.float_layout.clear_widgets()
-        #self.image = Image(source=path)
-        #self.float_layout.add_widget(self.image) #marc
-        #Clock.schedule_once(self.show_picture, 5)"""
-
-
+        Clock.unschedule(self.change_image)
+        Clock.schedule_interval(self.change_image, 5)
+        os.path.walk(SCREENSAVER_FOLDER, self.add_photos, None)
+        self.change_image()
 
 
 class MainLayout(FloatLayout):
