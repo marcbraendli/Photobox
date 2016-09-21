@@ -138,7 +138,8 @@ class PendingScreen(Screen):
                    
     def assembly_and_print(self, *kwargs):
         print"assembly_and_print"
-        Thread(target=self.assembly).start()
+        #Thread(target=self.assembly).start()
+        Clock.schedule_once(self.show_take_picture)
         self.shown_text = "Please wait..."
             
     def assembly(self, *kwargs):  
@@ -152,7 +153,7 @@ class PendingScreen(Screen):
         self.send_mail()
         self.clean_up()
         print "ende"
-        Clock.schedule_once(self.show_take_picture)
+        Clock.schedule_once(self.show_status_bar)
 
     def send_mail(self, *kwargs):
         print "send_mail"
@@ -180,7 +181,7 @@ class PendingScreen(Screen):
             os.makedirs(dir_path)
 
     def show_take_picture(self, *kwargs):
-        self.shown_text = "Bitte entnehmen Sie waht ever..."
+        self.shown_text = "Bitte entnehmen Sie what ever..."
         Clock.schedule_once(self.show_screen_saver, 15)
 
     def show_screen_saver(self, *kwargs):
@@ -220,12 +221,17 @@ class ScreenSaver(Screen):
         os.path.walk(SCREENSAVER_FOLDER, self.add_photos, None)
         self.change_image()
 
+    def on_touch_down(self, touch):
+        super(ScreenSaver, self).on_touch_down(touch)
+        if self.collide_point(*touch.pos):
+            self.show_login()
+
 
 class MainLayout(FloatLayout):
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
-        self.screen_manager.current = "screen_saver"
+        self.screen_manager.current = "pending"
 
  
 class MyApp(App):
