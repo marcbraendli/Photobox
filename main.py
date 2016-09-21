@@ -163,7 +163,7 @@ class PendingScreen(Screen):
 
     def send_mail(self, *kwargs):
         print "send_mail"
-        os.system("mail < ~/workspace/mail_message %s -s \"Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %
+        os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Ihr Bild von der Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %
                   (self.manager.mail_address, self.manager.timestamp))
        
     def print_picture(self, *kwargs):
