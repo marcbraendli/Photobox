@@ -68,7 +68,16 @@ class CaptureScreen(Screen):
         #self.cam = Camera(resolution=(640, 480), play=False)
         self.cam = Camera(resolution=(720, 540), play=True)
         self.add_widget(self.cam)
-        
+
+        # We need to stop the camera, because it introduces lag.
+        # But we can not stop the camera at init as this results in a bug
+        # (camera not updating the picture at all) when we try to play the
+        # camera later.
+
+        def stop_camera(*kwargs):
+            self.cam.play = False
+        Clock.schedule_once(stop_camera, 2)
+
         self.image = Image(source="")
 
         self.iteration = 0
