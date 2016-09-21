@@ -159,7 +159,7 @@ class PendingScreen(Screen):
         self.send_mail()
         self.clean_up()
         print "ende"
-        Clock.schedule_once(self.show_take_picture, 70)
+        Clock.schedule_once(self.show_take_picture)
 
     def send_mail(self, *kwargs):
         print "send_mail"
@@ -187,7 +187,7 @@ class PendingScreen(Screen):
             os.makedirs(dir_path)
 
     def show_take_picture(self, *kwargs):
-        self.shown_text = "Bitte entnehmen sie Ihr Photo./n/nWir bedanken uns und wÃ¼nschen Ihnen /neinen angenehmen Aufenthalt im Gasthof Oberort."
+        self.shown_text = "Bitte entnehmen sie Ihr Photo.\n\nWir bedanken uns und wünschen Ihnen einen \nangenehmen Aufenthalt im Gasthof Oberort."
         Clock.schedule_once(self.show_screen_saver, 30)
 
     def show_screen_saver(self, *kwargs):
@@ -238,7 +238,7 @@ class MainLayout(FloatLayout):
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
-        #self.screen_manager.current = "capture_screen"
+        #self.screen_manager.current = "pending_screen"
 
  
 class MyApp(App):
