@@ -45,7 +45,7 @@ class LoginScreen(Screen):
             self.manager.current = "agreement"
         else:
             print "Ungültige Adresse!!!"
-            self.message_text = "Bitte gib eine gültige Email-Adresse ein"
+            self.message_text = "Bitte geben Sie eine gültige E-mail Adresse ein"
 
     def validateEmail(self, email):
         if len(email) > 7:
@@ -146,7 +146,7 @@ class PendingScreen(Screen):
     def assembly_and_print(self, *kwargs):
         print"assembly_and_print"
         Thread(target=self.assembly).start()
-        self.shown_text = "Please wait..."
+        self.shown_text = "Bitte haben sie einen Moment Geduld"
             
     def assembly(self, *kwargs):  
         print "assembly"
@@ -187,7 +187,7 @@ class PendingScreen(Screen):
             os.makedirs(dir_path)
 
     def show_take_picture(self, *kwargs):
-        self.shown_text = "Bitte entnehmen Sie what ever..."
+        self.shown_text = "Bitte entnehmen sie Ihr Photo. Wir bedanken uns und wünschen Ihnen einen angenehmen Aufenthalt im Gasthof Oberort."
         Clock.schedule_once(self.show_screen_saver, 30)
 
     def show_screen_saver(self, *kwargs):
