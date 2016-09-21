@@ -10,6 +10,8 @@
         transition: SlideTransition()
         LoginScreen:
             id: login_screen
+        AgreementScreen:
+            id: agreement_screen
         CaptureScreen:
             id: capture_screen
         PendingScreen:
@@ -46,8 +48,22 @@
 			id: message
 			font_size: 30
 			text: root.message_text
-			
-        #Widget:  # Dummy widgets which just acts as spacer
+
+<AgreementScreen@Screen>:
+    name: "agreement"
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "Wetsch du dini mail adresse bespämä lah?"
+        BoxLayout:
+            Button:
+                text: "Nope"
+                on_press:
+                    root.manager.current = "login"
+            Button:
+                text: "Yes"
+                on_press:
+                    root.manager.current = "capture"
 
 <CaptureScreen>:
     name: 'capture'

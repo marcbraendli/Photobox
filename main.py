@@ -42,7 +42,7 @@ class LoginScreen(Screen):
             b = csv.writer(a)
             b.writerow(['%s' % mail_input, '%s' % self.manager.timestamp])
             a.close()
-            self.manager.current = "capture"
+            self.manager.current = "agreement"
         else:
             print "Ungültige Adresse!!!"
             self.message_text = "Bitte gib eine gültige Email-Adresse ein"
