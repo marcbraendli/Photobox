@@ -29,7 +29,7 @@
         Label:
             font_size: 30
             text: "Bitte geben Sie hier Ihre E-mail Adresse ein"
-            size_hint_y: .2  # => 30% of normal size (LoginScreen.height/4*0.3)
+            size_hint_y: .2  # => 20% of normal size (LoginScreen.height/4*0.3)
         TextInput:
             id: mail_input
             font_size: 30
@@ -53,15 +53,22 @@
     name: "agreement"
     BoxLayout:
         orientation: 'vertical'
+		padding: 20  
         Label:
-            text: "Ich bin damit einverstanden dass meine E-mail Adresse von der Firma Brändli Obst- und Weinbau Au am Zürichsee für saisonale Informationen genutzt werden darf."
+			font_size: 30
+			multiline: True
+            text: "Ich bin damit einverstanden dass meine E-mail Adresse \nvon der Firma Brändli Obst- und Weinbau Au am Zürichsee \nfür saisonale Informationen genutzt werden darf."
         BoxLayout:
+			padding: 20  # Border around the widgets inside this boxlayout
+			spacing: 15  # Spacing between the widgets inside this boxlayout
             Button:
-                text: "Nope"
+				font_size: 30
+                text: "Nein"
                 on_press:
                     root.manager.current = "login"
             Button:
-                text: "Yes"
+				font_size: 30
+                text: "Ja"
                 on_press:
                     root.manager.current = "capture"
 
@@ -112,6 +119,7 @@
             anim_delay: 0.1
         Label:
 			font_size: 30
+			multiline: True
             text: root.shown_text
         Button:
             text: "okay"

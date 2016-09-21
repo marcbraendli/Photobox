@@ -187,7 +187,7 @@ class PendingScreen(Screen):
             os.makedirs(dir_path)
 
     def show_take_picture(self, *kwargs):
-        self.shown_text = "Bitte entnehmen sie Ihr Photo. Wir bedanken uns und wünschen Ihnen einen angenehmen Aufenthalt im Gasthof Oberort."
+        self.shown_text = "Bitte entnehmen sie Ihr Photo./n/nWir bedanken uns und wünschen Ihnen /neinen angenehmen Aufenthalt im Gasthof Oberort."
         Clock.schedule_once(self.show_screen_saver, 30)
 
     def show_screen_saver(self, *kwargs):
