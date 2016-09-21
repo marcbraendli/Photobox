@@ -65,7 +65,6 @@ class CaptureScreen(Screen):
         self.countdown = Factory.Countdown()
         self.countdown.action = self.take_picture
         self.bind(on_pre_enter=self.show_start)
-        #self.cam = Camera(resolution=(640, 480), play=False)
         self.cam = Camera(resolution=(720, 540), play=True)
         self.add_widget(self.cam)
 
@@ -109,11 +108,10 @@ class CaptureScreen(Screen):
         print "show_picture"
         self.image = Image(source=path)
         self.float_layout.clear_widgets()
-        # self.float_layout.remove_widget(self.countdown)
-        self.float_layout.add_widget(self.image) #marc
+        self.float_layout.add_widget(self.image)
         if self.iteration == 3:
             self.iteration = 0
-            self.float_layout.clear_widgets()#marc
+            self.float_layout.clear_widgets()
             self.cam.play = False
             print"switch to pending"
             self.manager.current = "pending"  
@@ -148,7 +146,6 @@ class PendingScreen(Screen):
     def assembly_and_print(self, *kwargs):
         print"assembly_and_print"
         Thread(target=self.assembly).start()
-        #Clock.schedule_once(self.show_take_picture)
         self.shown_text = "Please wait..."
             
     def assembly(self, *kwargs):  
@@ -166,7 +163,7 @@ class PendingScreen(Screen):
 
     def send_mail(self, *kwargs):
         print "send_mail"
-        os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %
+        os.system("mail < ~/workspace/mail_message %s -s \"Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %
                   (self.manager.mail_address, self.manager.timestamp))
        
     def print_picture(self, *kwargs):
@@ -210,6 +207,7 @@ class ScreenSaver(Screen):
 
     def show_login(self, *kwargs):
         self.manager.current = "login"
+        #self.manager.current = "capture_screen"
         Clock.unschedule(self.change_image)
 
     def change_image(self, *kwargs):
@@ -240,7 +238,7 @@ class MainLayout(FloatLayout):
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
-        #self.screen_manager.current = "screen_saver"
+        #self.screen_manager.current = "capture_screen"
 
  
 class MyApp(App):
