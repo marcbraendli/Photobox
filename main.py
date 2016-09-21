@@ -22,7 +22,7 @@ import random
 
 COUNTDOWN = 3
 # /media/usb0/photobooth_archive/photobox_17092016/
-SCREENSAVER_FOLDER = "pics"
+SCREENSAVER_FOLDER = "/media/usb0/photobooth_archive/photobox_17092016/"
 
 
 class LoginScreen(Screen):
@@ -138,8 +138,8 @@ class PendingScreen(Screen):
                    
     def assembly_and_print(self, *kwargs):
         print"assembly_and_print"
-        #Thread(target=self.assembly).start()
-        Clock.schedule_once(self.show_take_picture)
+        Thread(target=self.assembly).start()
+        #Clock.schedule_once(self.show_take_picture)
         self.shown_text = "Please wait..."
             
     def assembly(self, *kwargs):  
@@ -153,7 +153,7 @@ class PendingScreen(Screen):
         self.send_mail()
         self.clean_up()
         print "ende"
-        Clock.schedule_once(self.show_status_bar)
+        Clock.schedule_once(self.show_take_picture)
 
     def send_mail(self, *kwargs):
         print "send_mail"
@@ -231,7 +231,7 @@ class MainLayout(FloatLayout):
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
-        self.screen_manager.current = "pending"
+        #self.screen_manager.current = "screen_saver"
 
  
 class MyApp(App):
