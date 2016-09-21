@@ -159,7 +159,7 @@ class PendingScreen(Screen):
         self.send_mail()
         self.clean_up()
         print "ende"
-        Clock.schedule_once(self.show_take_picture)
+        Clock.schedule_once(self.show_take_picture, 70)
 
     def send_mail(self, *kwargs):
         print "send_mail"
@@ -188,7 +188,7 @@ class PendingScreen(Screen):
 
     def show_take_picture(self, *kwargs):
         self.shown_text = "Bitte entnehmen Sie what ever..."
-        Clock.schedule_once(self.show_screen_saver, 15)
+        Clock.schedule_once(self.show_screen_saver, 30)
 
     def show_screen_saver(self, *kwargs):
         Clock.unschedule(self.show_screen_saver)
