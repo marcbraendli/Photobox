@@ -23,17 +23,39 @@ import random
 
 COUNTDOWN = 3
 
+COLLECT_MAILADRESS = 1
+ONLY_CAPTURING = 2
+
+
+#Possible values for MODE are:
+#   -COLLECT_MAILADRESS (save mailadress in .csv and capture photos)
+#   -ONLY_CAPTURING (capture photo without any mailadress inputs)
+#
+MODE = ONLY_CAPTURING
+
+
 
 class LoginScreen(Screen):
 
     def __init__(self, **kwargs):
         super(LoginScreen, self).__init__(**kwargs)
+        self.check_mode()
         self.bind(on_pre_enter=self.prepare)
 
     def timeout (self, *args):
         Logger.info( 'Application: Login User Timeout')
         self.mail_input.focus =False
         self.manager.current = "screen_saver"
+        
+    def check_mode(self, *args):
+        if MODE == COLLECT_MAILADRESS:
+            Logger.info('Application: MODE = COLLECT_MAILADRESS')
+        elif MODE == ONLY_CAPTURING:
+            Logger.info('Application: MODE = ONLY_CAPTURING')
+        else :
+            Logger.info('Application: Wrong MODE value  = %s' %MODE)
+            #Programmabbruch einfügen ???
+    
         
     def prepare(self, *args):
         self.manager.mail_address = ""
@@ -191,7 +213,8 @@ class PendingScreen(Screen):
         os.system("montage ~/workspace/temp_montage2.jpg ~/workspace/Photobox/footer_3.jpg -tile 2x1 -geometry +2+0 ~/workspace/temp_montage3.jpg")
         os.system("montage ~/workspace/temp_montage3.jpg -geometry +0+20 ~/workspace/photobox_%s.jpg" % self.manager.timestamp)
         self.print_picture()
-        self.send_mail()
+        if MODE == COLLECT_MAILADRESS:
+            self.send_mail()       
         self.clean_up()
         Logger.info( 'Application: assembly_end')
         Clock.schedule_once(self.show_take_out_picture, 70)
@@ -238,6 +261,7 @@ class TakeOutScreen(Screen):
         Clock.schedule_once(self.show_screen_saver, 30)
         
     def show_screen_saver(self, *kwargs):
+        Logger.info( 'Application: Start Screen Saver')
         Clock.unschedule(self.show_screen_saver)
         self.manager.current = "screen_saver"
 
@@ -252,8 +276,12 @@ class ScreenSaver(Screen):
         self.bind(on_pre_enter=self.find_all_photos)
 
     def show_login(self, *kwargs):
-        self.manager.current = "login"
-        #self.manager.current = "capture"
+    
+        if MODE == COLLECT_MAILADRESS:
+            self.screen_manager.current = "login"
+        elif MODE == ONLY_CAPTURING:
+            self.screen_manager.current = "capture"
+        
         Clock.unschedule(self.change_image)
 
     def change_image(self, *kwargs):
@@ -284,9 +312,11 @@ class MainLayout(FloatLayout):
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
-        #self.screen_manager.current = "pending"
-        #self.screen_manager.current = "agreement"
-
+        
+        if MODE == COLLECT_MAILADRESS:
+            self.screen_manager.current = "login"
+        elif MODE == ONLY_CAPTURING:
+            self.screen_manager.current = "capture"
  
 class MyApp(App):
 
