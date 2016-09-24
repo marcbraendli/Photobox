@@ -143,7 +143,6 @@ class PendingScreen(Screen):
     def assembly_and_print(self, *kwargs):
         print"assembly_and_print"
         Thread(target=self.assembly).start()
-        self.shown_text = "Bitte haben sie einen Moment Geduld"
             
     def assembly(self, *kwargs):  
         print "assembly"
@@ -156,7 +155,7 @@ class PendingScreen(Screen):
         self.send_mail()
         self.clean_up()
         print "ende"
-        Clock.schedule_once(self.show_take_out_picture)
+        Clock.schedule_once(self.show_take_out_picture, 70)
 
     def send_mail(self, *kwargs):
         print "send_mail"
@@ -184,12 +183,10 @@ class PendingScreen(Screen):
             os.makedirs(dir_path)
 
     def show_take_out_picture(self, *kwargs):
+        Clock.unschedule(self.show_take_out_picture)
         self.manager.current = "takeout"
-        #self.shown_text = "Bitte entnehmen sie Ihr Photo.\n\nWir bedanken uns und wünschen Ihnen einen \nangenehmen Aufenthalt im Gasthof Oberort."
-        #Clock.schedule_once(self.show_screen_saver, 30)
 
     def show_screen_saver(self, *kwargs):
-        Clock.unschedule(self.show_screen_saver)
         self.manager.current = "screen_saver"
 
 class TakeOutScreen(Screen):

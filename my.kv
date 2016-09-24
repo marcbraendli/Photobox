@@ -36,8 +36,8 @@
             id: mail_input
             font_size: 30
             multiline: False
+			text: ""
 			focus: True
-            #text: "marc@braendli.ch"
             size_hint_y: None  # Must set to None to honor height property
             height: 50
         Button:
@@ -113,7 +113,7 @@
 
 <PendingScreen@Screen>:
     name: 'pending'
-    shown_text: ""
+    #shown_text: ""
     BoxLayout:
         orientation: 'vertical'
 		Widget:
@@ -124,7 +124,8 @@
         Label:
 			font_size: 30
 			multiline: True
-            text: root.shown_text
+            #text: root.shown_text
+			text: "Bitte haben sie einen Moment Geduld"
         #Button:
             #text: "okay"
             #on_press:
