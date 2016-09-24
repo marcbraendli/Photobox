@@ -24,6 +24,11 @@
 <LoginScreen>:
     name: 'login'
 	message_text: ''
+	mail_input: mail_input
+	on_pre_enter:
+	    mail_input.text=""
+	on_enter:
+	    mail_input.focus=True
     BoxLayout:
         orientation: 'vertical'
         padding: 20  # Border around the widgets inside this boxlayout
