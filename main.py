@@ -21,9 +21,6 @@ import random
 
 
 COUNTDOWN = 3
-# /media/usb0/photobooth_archive/photobox_17092016/
-SCREENSAVER_FOLDER = "/media/usb0/photobooth_archive/photobox_17092016/"
-
 
 class LoginScreen(Screen):
 
@@ -159,7 +156,7 @@ class PendingScreen(Screen):
         self.send_mail()
         self.clean_up()
         print "ende"
-        Clock.schedule_once(self.show_take_picture)
+        Clock.schedule_once(self.show_take_out_picture)
 
     def send_mail(self, *kwargs):
         print "send_mail"
@@ -168,7 +165,7 @@ class PendingScreen(Screen):
        
     def print_picture(self, *kwargs):
         print "print_picture"
-        os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" % self.manager.timestamp)
+        #os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" % self.manager.timestamp)
        
     def clean_up(self, *kwargs):
         print "clean_up"
@@ -186,14 +183,27 @@ class PendingScreen(Screen):
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
 
-    def show_take_picture(self, *kwargs):
-        self.shown_text = "Bitte entnehmen sie Ihr Photo.\n\nWir bedanken uns und wünschen Ihnen einen \nangenehmen Aufenthalt im Gasthof Oberort."
-        Clock.schedule_once(self.show_screen_saver, 30)
+    def show_take_out_picture(self, *kwargs):
+        self.manager.current = "takeout"
+        #self.shown_text = "Bitte entnehmen sie Ihr Photo.\n\nWir bedanken uns und wünschen Ihnen einen \nangenehmen Aufenthalt im Gasthof Oberort."
+        #Clock.schedule_once(self.show_screen_saver, 30)
 
     def show_screen_saver(self, *kwargs):
         Clock.unschedule(self.show_screen_saver)
         self.manager.current = "screen_saver"
 
+class TakeOutScreen(Screen):
+
+    def __init__(self, **kwargs):
+        super(TakeOutScreen, self).__init__(**kwargs)
+        self.bind(on_enter=self.take_out_timer)
+       
+    def take_out_timer(self, *kwargs):
+        Clock.schedule_once(self.show_screen_saver, 30)
+        
+    def show_screen_saver(self, *kwargs):
+        Clock.unschedule(self.show_screen_saver)
+        self.manager.current = "screen_saver"
 
 class ScreenSaver(Screen):
 
@@ -207,7 +217,7 @@ class ScreenSaver(Screen):
 
     def show_login(self, *kwargs):
         self.manager.current = "login"
-        #self.manager.current = "capture_screen"
+        #self.manager.current = "capture"
         Clock.unschedule(self.change_image)
 
     def change_image(self, *kwargs):
@@ -225,7 +235,7 @@ class ScreenSaver(Screen):
     def find_all_photos(self, *kwargs):
         Clock.unschedule(self.change_image)
         Clock.schedule_interval(self.change_image, 5)
-        os.path.walk(SCREENSAVER_FOLDER, self.add_photos, None)
+        os.path.walk("/home/photobox/workspace/screensaver_images/", self.add_photos, None)
         self.change_image()
 
     def on_touch_down(self, touch):
@@ -238,7 +248,8 @@ class MainLayout(FloatLayout):
 
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
-        #self.screen_manager.current = "pending_screen"
+        #self.screen_manager.current = "pending"
+        #self.screen_manager.current = "capture"
 
  
 class MyApp(App):

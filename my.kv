@@ -16,6 +16,8 @@
             id: capture_screen
         PendingScreen:
             id: pending_screen
+		TakeOutScreen:
+			id: takeout_screen
 		ScreenSaver:
 			id: screen_saver
 
@@ -35,7 +37,7 @@
             font_size: 30
             multiline: False
 			focus: True
-            text: "marc@braendli.ch"
+            #text: "marc@braendli.ch"
             size_hint_y: None  # Must set to None to honor height property
             height: 50
         Button:
@@ -114,6 +116,8 @@
     shown_text: ""
     BoxLayout:
         orientation: 'vertical'
+		Widget:
+			size_hint_y: .1
         Image:
             source: 'loader.zip'
             anim_delay: 0.1
@@ -121,17 +125,29 @@
 			font_size: 30
 			multiline: True
             text: root.shown_text
-        Button:
-            text: "okay"
-            on_press:
-                root.show_screen_saver()
+        #Button:
+            #text: "okay"
+            #on_press:
+                #root.show_screen_saver()
+				
+<TakeOutScreen@Screen>:
+    name: 'takeout'
+    shown_text: ""
+    BoxLayout:
+        orientation: 'vertical'
+		Widget:
+			size_hint_y: .1
+        Label:
+			font_size: 30
+			multiline: True
+            text: "Bitte entnehmen sie Ihr Photo.\n\nWir bedanken uns und wünschen Ihnen einen \nangenehmen Aufenthalt im Gasthof Oberort."
 
 <ScreenSaver>:
 	name: 'screen_saver'
 	Image:
 	    source: root.image_source
-	Button:
-		size_hint_y: .4
-        text: "okay"
-        on_press:
-            root.show_login()
+	#Button:
+		#size_hint_y: .4
+        #text: "okay"
+        #on_press:
+            #root.show_login()
