@@ -29,17 +29,21 @@ class LoginScreen(Screen):
         super(LoginScreen, self).__init__(**kwargs)
         self.bind(on_pre_enter=self.prepare)
 
+    def timeout (self, *args):
+        self.mail_input.focus =False
+        self.manager.current = "screen_saver"
+        
     def prepare(self, *args):
         self.manager.mail_address = ""
+        Clock.schedule_once(self.timeout, 600)
+        #Watchdog timer, reset to screensaver after 5 minutes with no email input
 
     def next(self, mail_input):
         if self.validateEmail(mail_input):
+            Clock.unschedule(self.timeout)
+            #deactivate login watchdog
             print "Gültige Adresse"
             self.manager.mail_address = mail_input
-            a = open('/home/photobox/workspace/mailadressen.csv', 'ab')
-            b = csv.writer(a)
-            b.writerow(['%s' % mail_input, '%s' % self.manager.timestamp])
-            a.close()
             self.manager.current = "agreement"
         else:
             print "Ungültige Adresse!!!"
@@ -52,9 +56,31 @@ class LoginScreen(Screen):
                 self.manager.daystamp = time.strftime("%d%m%Y")
                 return True
             return False
+            
+class AgreementScreen(Screen):
+    def __init__(self, **kwargs):
+        super(AgreementScreen, self).__init__(**kwargs)
+        self.bind(on_enter=self.prepare)
+        
+        
+    def prepare (self, *args):
+        Clock.schedule_once(self.timeout, 600)
+        #Watchdog timer, reset to screensaver after 5 minutes with no email input
+        
+    def timeout (self, *args):
+        self.manager.current = "screen_saver"
+    
+    def if_agree (self, *args):
+        Clock.unschedule(self.timeout)
+        a = open('/home/photobox/workspace/mailadressen.csv', 'ab')
+        b = csv.writer(a)
+        b.writerow(['%s' %self.manager.mail_address, '%s' % self.manager.timestamp])
+        a.close()
+        self.manager.current = "capture"
 
 
 class CaptureScreen(Screen):
+
 
     def __init__(self, **kwargs):
         super(CaptureScreen, self).__init__(**kwargs)
@@ -79,11 +105,18 @@ class CaptureScreen(Screen):
 
         self.iteration = 0
 
+    def timeout (self, *args):
+        self.manager.current = "screen_saver"
+
     def show_start(self, *kwargs):
         self.float_layout.add_widget(self.start_button)
+        Clock.schedule_once(self.timeout, 600)
+        #activate watchdog timer, reset to screensaver after 5 minutes with no start
         self.cam.play = True
 
     def show_countdown(self, *kwargs):
+        Clock.unschedule(self.timeout)
+        #deactivate capture watchdog
         self.float_layout.remove_widget(self.start_button)
         self.float_layout.remove_widget(self.image)
         self.float_layout.add_widget(self.countdown)
@@ -247,7 +280,7 @@ class MainLayout(FloatLayout):
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
         #self.screen_manager.current = "pending"
-        #self.screen_manager.current = "capture"
+        self.screen_manager.current = "agreement"
 
  
 class MyApp(App):
