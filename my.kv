@@ -56,7 +56,7 @@
 			font_size: 30
 			text: root.message_text
 
-<AgreementScreen@Screen>:
+<AgreementScreen>:
     name: "agreement"
     BoxLayout:
         orientation: 'vertical'
@@ -77,7 +77,6 @@
 				font_size: 30
                 text: "Ja"
                 on_press:
-                    #root.manager.current = "capture"
 					root.if_agree()
 <CaptureScreen>:
     name: 'capture'
@@ -116,7 +115,7 @@
             text: str(root.count)
 
 
-<PendingScreen@Screen>:
+<PendingScreen>:
     name: 'pending'
     #shown_text: ""
     BoxLayout:
@@ -136,7 +135,7 @@
             #on_press:
                 #root.show_screen_saver()
 				
-<TakeOutScreen@Screen>:
+<TakeOutScreen>:
     name: 'takeout'
     shown_text: ""
     BoxLayout:

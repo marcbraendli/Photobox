@@ -12,6 +12,7 @@ from kivy.properties import StringProperty
 from threading import Thread
 from kivy.config import Config
 from kivy.core.window import Window
+from kivy.logger import Logger
 
 import os
 import time
@@ -30,6 +31,7 @@ class LoginScreen(Screen):
         self.bind(on_pre_enter=self.prepare)
 
     def timeout (self, *args):
+        Logger.info( 'Application: Login User Timeout')
         self.mail_input.focus =False
         self.manager.current = "screen_saver"
         
@@ -42,11 +44,11 @@ class LoginScreen(Screen):
         if self.validateEmail(mail_input):
             Clock.unschedule(self.timeout)
             #deactivate login watchdog
-            print "Gültige Adresse"
+            Logger.info( 'Application: Gültige Adresse')
             self.manager.mail_address = mail_input
             self.manager.current = "agreement"
         else:
-            print "Ungültige Adresse!!!"
+            Logger.info( 'Application: Ungültige Adresse!!!')
             self.message_text = "Bitte geben Sie eine gültige E-mail Adresse ein"
 
     def validateEmail(self, email):
@@ -54,6 +56,8 @@ class LoginScreen(Screen):
             if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$", email) != None:
                 self.manager.timestamp = time.strftime("%d%m%Y-%H%M%S")
                 self.manager.daystamp = time.strftime("%d%m%Y")
+                Logger.info( 'Application: Timestamp: %s' %self.manager.timestamp)
+                Logger.info( 'Application: Daystamp:  %s' %self.manager.daystamp)
                 return True
             return False
             
@@ -68,10 +72,13 @@ class AgreementScreen(Screen):
         #Watchdog timer, reset to screensaver after 5 minutes with no email input
         
     def timeout (self, *args):
+        Logger.info( 'Application: Agreement User Timeout')
         self.manager.current = "screen_saver"
     
     def if_agree (self, *args):
+        Logger.info( 'Application: Agreet')
         Clock.unschedule(self.timeout)
+        #deactivate agreement watchdog
         a = open('/home/photobox/workspace/mailadressen.csv', 'ab')
         b = csv.writer(a)
         b.writerow(['%s' %self.manager.mail_address, '%s' % self.manager.timestamp])
@@ -123,7 +130,7 @@ class CaptureScreen(Screen):
         self.countdown.start()
 
     def take_picture(self, *kwargs):
-        print "take_picture", self.manager.timestamp
+        Logger.info( 'Application: take_picture')
         self.float_layout.remove_widget(self.countdown)
         Thread(target=self._take_picture_aync).start()
 
@@ -136,7 +143,7 @@ class CaptureScreen(Screen):
         Clock.schedule_once(lambda x: self.show_picture(path))
 
     def show_picture(self, path):
-        print "show_picture"
+        Logger.info( 'Application: show_picture')
         self.image = Image(source=path)
         self.float_layout.clear_widgets()
         self.float_layout.add_widget(self.image)
@@ -144,7 +151,6 @@ class CaptureScreen(Screen):
             self.iteration = 0
             self.float_layout.clear_widgets()
             self.cam.play = False
-            print"switch to pending"
             self.manager.current = "pending"  
         else:
             self.iteration += 1
@@ -175,11 +181,10 @@ class PendingScreen(Screen):
         self.bind(on_enter=self.assembly_and_print)
                    
     def assembly_and_print(self, *kwargs):
-        print"assembly_and_print"
         Thread(target=self.assembly).start()
             
     def assembly(self, *kwargs):  
-        print "assembly"
+        Logger.info( 'Application: assembly')
         os.system("mogrify -resize 856x570 ~/workspace/capture_images/*.jpg")
         os.system("montage ~/workspace/capture_images/*.jpg -tile 2x2 -geometry +10+10 ~/workspace/temp_montage.jpg")
         os.system("montage ~/workspace/temp_montage.jpg -geometry +4+23 ~/workspace/temp_montage2.jpg")
@@ -188,20 +193,20 @@ class PendingScreen(Screen):
         self.print_picture()
         self.send_mail()
         self.clean_up()
-        print "ende"
+        Logger.info( 'Application: assembly_end')
         Clock.schedule_once(self.show_take_out_picture, 70)
 
     def send_mail(self, *kwargs):
-        print "send_mail"
+        Logger.info( 'Application: send_mail')
         os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Ihr Bild von der Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %
                   (self.manager.mail_address, self.manager.timestamp))
        
     def print_picture(self, *kwargs):
-        print "print_picture"
+        Logger.info( 'Application: print_picture')
         #os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" % self.manager.timestamp)
        
     def clean_up(self, *kwargs):
-        print "clean_up"
+        Logger.info( 'Application: clean_up')
         path ="/media/usb0/photobooth_archive/photobox_%s" % self.manager.timestamp
         self.assure_path_exists(path)
         os.system("cp ~/workspace/photobox_%s.jpg /media/usb0/photobooth_archive/photobox_%s/" %
@@ -280,7 +285,7 @@ class MainLayout(FloatLayout):
     def __init__(self, **kwargs):
         super(MainLayout, self).__init__(**kwargs)
         #self.screen_manager.current = "pending"
-        self.screen_manager.current = "agreement"
+        #self.screen_manager.current = "agreement"
 
  
 class MyApp(App):
