@@ -31,8 +31,7 @@ ONLY_CAPTURING = 2
 #   -COLLECT_MAILADRESS (save mailadress in .csv and capture photos)
 #   -ONLY_CAPTURING (capture photo without any mailadress inputs)
 #
-MODE = ONLY_CAPTURING
-
+MODE = COLLECT_MAILADRESS
 
 
 class LoginScreen(Screen):
@@ -110,7 +109,6 @@ class AgreementScreen(Screen):
 
 class CaptureScreen(Screen):
 
-
     def __init__(self, **kwargs):
         super(CaptureScreen, self).__init__(**kwargs)
         self.start_button = Factory.StartButton()
@@ -142,6 +140,7 @@ class CaptureScreen(Screen):
         Clock.schedule_once(self.timeout, 600)
         #activate watchdog timer, reset to screensaver after 5 minutes with no start
         self.cam.play = True
+        Window.release_all_keyboards()
 
     def show_countdown(self, *kwargs):
         Clock.unschedule(self.timeout)
