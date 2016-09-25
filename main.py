@@ -58,7 +58,7 @@ class LoginScreen(Screen):
         
     def prepare(self, *args):
         self.manager.mail_address = ""
-        Clock.schedule_once(self.timeout, 600)
+        Clock.schedule_once(self.timeout, 300)
         #Watchdog timer, reset to screensaver after 5 minutes with no email input
 
     def next(self, mail_input):
@@ -89,7 +89,7 @@ class AgreementScreen(Screen):
         
         
     def prepare (self, *args):
-        Clock.schedule_once(self.timeout, 600)
+        Clock.schedule_once(self.timeout, 300)
         #Watchdog timer, reset to screensaver after 5 minutes with no email input
         
     def timeout (self, *args):
@@ -137,7 +137,7 @@ class CaptureScreen(Screen):
 
     def show_start(self, *kwargs):
         self.float_layout.add_widget(self.start_button)
-        Clock.schedule_once(self.timeout, 600)
+        Clock.schedule_once(self.timeout, 300)
         #activate watchdog timer, reset to screensaver after 5 minutes with no start
         self.cam.play = True
         Window.release_all_keyboards()
