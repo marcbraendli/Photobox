@@ -65,6 +65,11 @@ class LoginScreen(Screen):
         else:
             Logger.info('Application: No Internet!!!')
             self.programmabbruch
+        if os.path.exists('/media/usb0/photobooth_archive'):
+            Logger.info('Application: USB-Stick connected')
+        else:
+            Logger.info('Application: USB-Stick missed')
+            self.programmabbruch
             
     def prepare(self, *args):
         self.manager.mail_address = ""
