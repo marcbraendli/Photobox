@@ -22,6 +22,7 @@ import random
 
 
 COUNTDOWN = 3
+WATCHDOG_TIME = 10
 
 COLLECT_MAILADRESS = 1
 ONLY_CAPTURING = 2
@@ -58,7 +59,7 @@ class LoginScreen(Screen):
         
     def prepare(self, *args):
         self.manager.mail_address = ""
-        Clock.schedule_once(self.timeout, 300)
+        Clock.schedule_once(self.timeout, WATCHDOG_TIME)
         #Watchdog timer, reset to screensaver after 5 minutes with no email input
 
     def next(self, mail_input):
@@ -89,7 +90,7 @@ class AgreementScreen(Screen):
         
         
     def prepare (self, *args):
-        Clock.schedule_once(self.timeout, 300)
+        Clock.schedule_once(self.timeout, WATCHDOG_TIME)
         #Watchdog timer, reset to screensaver after 5 minutes with no email input
         
     def timeout (self, *args):
@@ -137,7 +138,7 @@ class CaptureScreen(Screen):
 
     def show_start(self, *kwargs):
         self.float_layout.add_widget(self.start_button)
-        Clock.schedule_once(self.timeout, 300)
+        Clock.schedule_once(self.timeout, WATCHDOG_TIME)
         #activate watchdog timer, reset to screensaver after 5 minutes with no start
         self.cam.play = True
         Window.release_all_keyboards()
@@ -277,9 +278,9 @@ class ScreenSaver(Screen):
     def show_login(self, *kwargs):
     
         if MODE == COLLECT_MAILADRESS:
-            self.screen_manager.current = "login"
+            self.manager.current = "login"
         elif MODE == ONLY_CAPTURING:
-            self.screen_manager.current = "capture"
+            self.manager.current = "capture"
         
         Clock.unschedule(self.change_image)
 
