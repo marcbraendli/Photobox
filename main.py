@@ -19,13 +19,18 @@ import time
 import csv
 import re
 import random
+import socket
 
-
-COUNTDOWN = 3
-WATCHDOG_TIME = 10
-
+#Enumerations, don't change
 COLLECT_MAILADRESS = 1
 ONLY_CAPTURING = 2
+
+
+#Global variables
+REMOTE_SERVER = "www.google.com"
+COUNTDOWN = 3
+WATCHDOG_TIME = 300 #5 Minuten
+
 
 
 #Possible values for MODE are:
@@ -39,7 +44,7 @@ class LoginScreen(Screen):
 
     def __init__(self, **kwargs):
         super(LoginScreen, self).__init__(**kwargs)
-        self.check_mode()
+        self.startup_check()
         self.bind(on_pre_enter=self.prepare)
 
     def timeout (self, *args):
@@ -47,20 +52,24 @@ class LoginScreen(Screen):
         self.mail_input.focus =False
         self.manager.current = "screen_saver"
         
-    def check_mode(self, *args):
+    def startup_check(self, *args):
         if MODE == COLLECT_MAILADRESS:
             Logger.info('Application: MODE = COLLECT_MAILADRESS')
         elif MODE == ONLY_CAPTURING:
             Logger.info('Application: MODE = ONLY_CAPTURING')
-        else :
+        else:
             Logger.info('Application: Wrong MODE value  = %s' %MODE)
-            #Programmabbruch einfügen ???
-    
-        
+            self.programmabbruch
+        if self.is_connected():
+            Logger.info('Application: Internet connectet')
+        else:
+            Logger.info('Application: No Internet!!!')
+            self.programmabbruch
+            
     def prepare(self, *args):
         self.manager.mail_address = ""
         Clock.schedule_once(self.timeout, WATCHDOG_TIME)
-        #Watchdog timer, reset to screensaver after 5 minutes with no email input
+        #Watchdog timer, reset to screensaver after WATCHDOG_TIME minutes with no email input
 
     def next(self, mail_input):
         if self.validateEmail(mail_input):
@@ -83,6 +92,19 @@ class LoginScreen(Screen):
                 return True
             return False
             
+    def is_connected(self, *args):
+      try:
+      # see if we can resolve the host name -- tells us if there is
+      # a DNS listening
+        host = socket.gethostbyname(REMOTE_SERVER)
+        # connect to the host -- tells us if the host is actually
+        # reachable
+        s = socket.create_connection((host, 80), 2)
+        return True
+      except:
+         pass
+      return False
+            
 class AgreementScreen(Screen):
     def __init__(self, **kwargs):
         super(AgreementScreen, self).__init__(**kwargs)
@@ -91,7 +113,7 @@ class AgreementScreen(Screen):
         
     def prepare (self, *args):
         Clock.schedule_once(self.timeout, WATCHDOG_TIME)
-        #Watchdog timer, reset to screensaver after 5 minutes with no email input
+        #Watchdog timer, reset to screensaver after WATCHDOG_TIME minutes with no email input
         
     def timeout (self, *args):
         Logger.info( 'Application: Agreement User Timeout')
@@ -101,9 +123,9 @@ class AgreementScreen(Screen):
         Logger.info( 'Application: Agreet')
         Clock.unschedule(self.timeout)
         #deactivate agreement watchdog
-        a = open('/home/photobox/workspace/mailadressen.csv', 'ab')
+        a = open('/media/usb0/mailadressen.csv', 'ab')
         b = csv.writer(a)
-        b.writerow(['%s' %self.manager.mail_address, '%s' % self.manager.timestamp])
+        b.writerow(['%s' % self.manager.timestamp, '%s' %self.manager.mail_address])
         a.close()
         self.manager.current = "capture"
 
@@ -139,7 +161,7 @@ class CaptureScreen(Screen):
     def show_start(self, *kwargs):
         self.float_layout.add_widget(self.start_button)
         Clock.schedule_once(self.timeout, WATCHDOG_TIME)
-        #activate watchdog timer, reset to screensaver after 5 minutes with no start
+        #activate watchdog timer, reset to screensaver after WATCHDOG_TIME minutes with no start
         self.cam.play = True
         Window.release_all_keyboards()
 
