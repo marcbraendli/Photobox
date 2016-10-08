@@ -63,7 +63,7 @@ class LoginScreen(Screen):
         if self.is_connected():
             Logger.info('Application: Internet connectet')
         else:
-            Logger.info('Application: No Internet!!!')
+            Logger.info('Application: No Internet connection')
             self.programmabbruch
         if os.path.exists('/media/usb0/photobooth_archive'):
             Logger.info('Application: USB-Stick connected')
