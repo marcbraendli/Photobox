@@ -253,7 +253,7 @@ class PendingScreen(Screen):
        
     def print_picture(self, *kwargs):
         Logger.info( 'Application: print_picture')
-        #os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" % self.manager.timestamp)
+        os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" % self.manager.timestamp)
        
     def clean_up(self, *kwargs):
         Logger.info( 'Application: clean_up')
