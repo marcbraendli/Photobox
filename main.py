@@ -88,6 +88,9 @@ class LoginScreen(Screen):
             self.message_text = "Bitte geben Sie eine gültige E-mail Adresse ein"
 
     def validateEmail(self, email):
+	if email=="fuss1995":
+	    Logger.info( 'Application: Wird beendet')	
+	    self.programmabbruch
         if len(email) > 7:
             if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$", email) != None:
                 self.manager.timestamp = time.strftime("%d%m%Y-%H%M%S")
@@ -248,11 +251,11 @@ class PendingScreen(Screen):
 
     def send_mail(self, *kwargs):
         Logger.info( 'Application: send_mail')
-        os.system("mail < ~/workspace/Photobox/mail_message %s -s \"Ihr Bild von der Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %
+        os.system("mail < ~/workspace/Photobox/mail_message.eml %s -s \"Ihr Bild von der Photobox\" -A \"/home/photobox/workspace/photobox_%s.jpg\"" %
                   (self.manager.mail_address, self.manager.timestamp))
        
     def print_picture(self, *kwargs):
-        Logger.info( 'Application: print_picture')
+        Logger.info( 'Application: print_picture, auskommentiert')
         os.system("lp -d CP9810DW ~/workspace/photobox_%s.jpg" % self.manager.timestamp)
        
     def clean_up(self, *kwargs):
